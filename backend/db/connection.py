@@ -2,8 +2,6 @@ import psycopg2
 import os
 from dotenv import load_dotenv
 
-# DATABASE_URL = "postgresql://postgres.fpocrkpekpcqzipcmtvm:dbm2025dbm2025dbm@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
-
 # 讀取 .env 檔案
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")

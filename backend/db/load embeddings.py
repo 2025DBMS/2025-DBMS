@@ -10,8 +10,6 @@ from dotenv import load_dotenv
 load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# DATABASE_URL = "postgresql://postgres.fpocrkpekpcqzipcmtvm:dbm2025dbm2025dbm@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
-
 def fetch_all_image_urls(cur):
     cur.execute("SELECT image_url FROM listing_images WHERE image_embedding IS NULL")
     urls = [row[0] for row in cur.fetchall()]
