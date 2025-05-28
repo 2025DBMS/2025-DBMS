@@ -1,4 +1,3 @@
-# 2025DBMS
 ## 專案結構簡介
 
 ```
@@ -24,14 +23,12 @@
 createdb dbms2025
 ```
 
-建立資料庫後，請依序執行以下 SQL 檔案來初始化 schema 與預設資料：
+建立資料庫後，請依序執行以下 SQL 檔案來初始化 schema 與預設資料，或使用任何 GUI 工具（如 pgAdmin）創建。
 
 ```bash
 psql -d dbms2025 -f backend/db/init.sql
 psql -d dbms2025 -f backend/db/insert_data.sql
 ```
-
-或使用任何 GUI 工具（如 pgAdmin）創建。
 
 請參考 `backend/.env.example` 複製為 `backend/.env`，並填入正確的連線資訊，範例格式如下。
 
