@@ -46,12 +46,6 @@ DATABASE_URL=postgresql://postgres:your_password@localhost:5432/dbms2025
 DATABASE_URL=<supabase_connection_string>
 ```
 
-範例格式如下：
-
-```
-DATABASE_URL=postgresql://your_user:your_password@your_host:5432/your_db
-```
-
 ---
 
 ### 步驟二：安裝相依套件
