@@ -1,8 +1,0 @@
-psycopg2-binary
-transformers
-torch
-pillow
-requests
-fastapi
-uvicorn
-python-dotenv

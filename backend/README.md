@@ -2,11 +2,11 @@
 
 ```
 2025DBMS-main/
+├── .env                          # 環境變數設定檔
+├── requirements.txt          # Python 相依套件
 ├── backend/
-│   ├── .env.example              # 範例環境變數設定檔
-│   ├── requirements.txt          # Python 相依套件
 │   └── db/
-│       └── connection.py         # 資料庫連線設定
+│       └── connection.py         # 資料庫連線設定測試
 ```
 
 ## 使用資料庫
@@ -30,7 +30,7 @@ psql -d dbms2025 -f backend/db/init.sql
 psql -d dbms2025 -f backend/db/insert_data.sql
 ```
 
-請參考 `backend/.env.example` 複製為 `backend/.env`，並填入正確的連線資訊，範例格式如下。
+請參考 `.env.example` 複製為 `.env`，並填入正確的連線資訊，範例格式如下。
 
 ```
 DATABASE_URL=postgresql://postgres:your_password@localhost:5432/dbms2025
@@ -40,7 +40,7 @@ DATABASE_URL=postgresql://postgres:your_password@localhost:5432/dbms2025
 
 本專案使用 Supabase（基於 PostgreSQL 的雲端平台）作為遠端資料庫。
 
-請參考 `backend/.env.example` 複製為 `backend/.env`，並填入正確的連線資訊。
+請參考 `.env.example` 複製為 `.env`，並填入正確的連線資訊。
 
 ```
 DATABASE_URL=<supabase_connection_string>
@@ -50,10 +50,9 @@ DATABASE_URL=<supabase_connection_string>
 
 ### 步驟二：安裝相依套件
 
-請在 `backend` 資料夾內安裝所需 Python 套件：
+請在根目錄資料夾內安裝所需 Python 套件：
 
 ```bash
-cd backend
 pip install -r requirements.txt
 ```
 
