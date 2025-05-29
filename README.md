@@ -76,4 +76,4 @@ pip install -r requirements.txt
 python backend/db/connection.py
 ```
 
-如果顯示成功連線與目前 timestamp，以及一筆 `listings` 資料表的資料，即表示資料庫連線成功。
+如果顯示成功連線與目前timestamp，以及一筆 `listings` 資料表的資料，即表示資料庫連線成功。

@@ -41,5 +41,6 @@ INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (10, 1
 INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (11, 18857019, 'https://img1.591.com.tw/house/2025/05/11/174691188486047005.jpg!1000x.water2.jpg', 1);
 INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (12, 18857019, 'https://img1.591.com.tw/house/2025/05/11/174691188489861809.jpg!1000x.water2.jpg', 2);
 
+
 -- 清理資料
 --TRUNCATE TABLE listing_images, listing_rules, listing_facilities, listings RESTART IDENTITY CASCADE;
