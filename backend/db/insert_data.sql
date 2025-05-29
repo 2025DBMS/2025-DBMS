@@ -30,16 +30,16 @@ INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (3, 18
 INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (4, 18811487, 'https://img2.591.com.tw/house/2025/02/15/173959586119818604.jpg!1000x.water2.jpg', 1);
 
 INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (5, 18827060, 'https://img1.591.com.tw/house/2025/04/06/174392657077330908.jpg!1000x.water2.jpg', 1);
-INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (5, 18827060, 'https://img1.591.com.tw/house/2025/04/06/174392657069955902.jpg!1000x.water2.jpg', 1);
-INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (5, 18827060, 'https://img2.591.com.tw/house/2025/04/06/174392657047882908.jpg!1000x.water2.jpg', 1);
+INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (6, 18827060, 'https://img1.591.com.tw/house/2025/04/06/174392657069955902.jpg!1000x.water2.jpg', 1);
+INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (7, 18827060, 'https://img2.591.com.tw/house/2025/04/06/174392657047882908.jpg!1000x.water2.jpg', 1);
 
-INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (6, 18970651, 'https://img2.591.com.tw/house/2025/05/27/174835854359843603.jpg!1000x.water2.jpg', 1);
-INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (6, 18970651, 'https://img2.591.com.tw/house/2025/05/27/174835854356475300.jpg!1000x.water2.jpg', 2);
+INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (8, 18970651, 'https://img2.591.com.tw/house/2025/05/27/174835854359843603.jpg!1000x.water2.jpg', 1);
+INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (9, 18970651, 'https://img2.591.com.tw/house/2025/05/27/174835854356475300.jpg!1000x.water2.jpg', 2);
 
-INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (7, 18947446, 'https://img2.591.com.tw/house/2023/05/27/168515685294674987.jpg!1000x.water2.jpg', 1);
+INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (10, 18947446, 'https://img2.591.com.tw/house/2023/05/27/168515685294674987.jpg!1000x.water2.jpg', 1);
 
-INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (8, 18857019, 'https://img1.591.com.tw/house/2025/05/11/174691188486047005.jpg!1000x.water2.jpg', 1);
-INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (9, 18857019, 'https://img1.591.com.tw/house/2025/05/11/174691188489861809.jpg!1000x.water2.jpg', 2);
+INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (11, 18857019, 'https://img1.591.com.tw/house/2025/05/11/174691188486047005.jpg!1000x.water2.jpg', 1);
+INSERT INTO listing_images (id, listing_id, image_url, sort_order) VALUES (12, 18857019, 'https://img1.591.com.tw/house/2025/05/11/174691188489861809.jpg!1000x.water2.jpg', 2);
 
 -- 清理資料
 --TRUNCATE TABLE listing_images, listing_rules, listing_facilities, listings RESTART IDENTITY CASCADE;
