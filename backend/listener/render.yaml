@@ -1,0 +1,21 @@
+services:
+  - name: listener-service
+    type: web
+    env: python
+    buildCommand: ""
+    startCommand: python listeners/main.py
+    envVars:
+      - key: DATABASE_URL
+        value: your_postgres_url_here
+    autoDeploy: false
+
+  # 這部分手動觸發，Render 要錢 
+  # - name: embed-scheduler
+  #   type: worker
+  #   env: python
+  #   buildCommand: ""
+  #   startCommand: python db/generate_embeddings.py
+  #   schedule: "0 9 * * *"  
+  #   envVars:
+  #     - key: DATABASE_URL
+  #       value: your_postgres_url_here
