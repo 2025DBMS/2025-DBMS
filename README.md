@@ -57,6 +57,15 @@ cd backend
 pip install -r requirements.txt
 ```
 
+註：Windows 系統若想要建立虛擬環境可執行以下
+
+```bash
+cd backend
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+```
+
 ---
 
 ### 步驟三：確認可連線資料庫

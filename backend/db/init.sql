@@ -55,3 +55,9 @@ CREATE TABLE listing_images (
   image_embedding VECTOR(512),
   sort_order INTEGER
 );
+
+CREATE TABLE listings_embeddings (
+  listing_id INTEGER PRIMARY KEY REFERENCES listings(id),
+  listing_desc TEXT,
+  facility_desc TEXT
+);
