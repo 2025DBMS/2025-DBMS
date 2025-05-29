@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if listing %}{{ listing.title }} - 房屋租賃平台{% else %}物件詳情 - 房屋租賃平台{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if error %}
+<div class="container mt-4">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">找不到物件</h4>
+        <p>{{ error }}</p>
+        <hr>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">返回首頁</a>
+    </div>
+</div>
+{% elif listing %}
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">首頁</a></li>
+            <li class="breadcrumb-item">{{ listing.city }}</li>
+            <li class="breadcrumb-item">{{ listing.district }}</li>
+            <li class="breadcrumb-item active" aria-current="page">物件詳情</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Image Gallery -->
+        <div class="col-lg-8">
+            <div class="listing-images mb-4">
+                {% if images %}
+                <div id="listingCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for image in images %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <img src="{{ image.image_url }}" class="d-block w-100 listing-image" alt="房屋照片">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if images|length > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="no-image-placeholder">
+                    <i class="fas fa-image fa-3x text-muted"></i>
+                    <p class="text-muted mt-2">暫無圖片</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Property Details -->
+            <div class="property-details">
+                <h1 class="h3 mb-3">{{ listing.title }}</h1>
+                
+                <div class="basic-info mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>地址：</strong>{{ listing.address or '地址資訊待更新' }}</p>
+                            <p><strong>類型：</strong>{{ listing.building_type or '未提供' }}</p>
+                            <p><strong>格局：</strong>{{ listing.layout or '未提供' }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>坪數：</strong>{{ listing.area }}坪</p>
+                            <p><strong>樓層：</strong>{{ listing.floor or '未提供' }}</p>
+                            <p><strong>可入住日：</strong>{{ listing.available_from or '未提供' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Facilities -->
+                {% if facilities %}
+                <div class="facilities-section mb-4">
+                    <h5>房屋設備</h5>
+                    <div class="facilities-list">
+                        {% if facilities.has_tv %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-tv me-1"></i>電視</span>{% endif %}
+                        {% if facilities.has_aircon %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-snowflake me-1"></i>冷氣</span>{% endif %}
+                        {% if facilities.has_fridge %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-cube me-1"></i>冰箱</span>{% endif %}
+                        {% if facilities.has_washing %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-tshirt me-1"></i>洗衣機</span>{% endif %}
+                        {% if facilities.has_heater %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-fire me-1"></i>熱水器</span>{% endif %}
+                        {% if facilities.has_bed %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-bed me-1"></i>床</span>{% endif %}
+                        {% if facilities.has_wardrobe %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-door-open me-1"></i>衣櫃</span>{% endif %}
+                        {% if facilities.has_internet %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-wifi me-1"></i>網路</span>{% endif %}
+                        {% if facilities.has_gas %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-fire-alt me-1"></i>瓦斯</span>{% endif %}
+                        {% if facilities.has_sofa %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-couch me-1"></i>沙發</span>{% endif %}
+                        {% if facilities.has_table %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-table me-1"></i>桌子</span>{% endif %}
+                        {% if facilities.has_balcony %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-city me-1"></i>陽台</span>{% endif %}
+                        {% if facilities.has_elevator %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-elevator me-1"></i>電梯</span>{% endif %}
+                        {% if facilities.has_parking %}<span class="badge bg-success me-2 mb-2"><i class="fas fa-car me-1"></i>停車位</span>{% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Rules -->
+                {% if rules %}
+                <div class="rules-section mb-4">
+                    <h5>租賃規則</h5>
+                    <div class="rules-list">
+                        {% if rules.cooking_allowed %}<span class="badge bg-info me-2 mb-2"><i class="fas fa-utensils me-1"></i>可開伙</span>{% endif %}
+                        {% if rules.pet_allowed %}<span class="badge bg-info me-2 mb-2"><i class="fas fa-paw me-1"></i>可養寵物</span>{% endif %}
+                        {% if rules.short_term_allowed %}<span class="badge bg-info me-2 mb-2"><i class="fas fa-calendar me-1"></i>可短租</span>{% endif %}
+                        {% if not rules.smoking_allowed %}<span class="badge bg-warning me-2 mb-2"><i class="fas fa-smoking-ban me-1"></i>禁止吸菸</span>{% endif %}
+                        {% if rules.gender_restricted %}<span class="badge bg-secondary me-2 mb-2"><i class="fas fa-user me-1"></i>{{ rules.gender_restricted }}</span>{% endif %}
+                        {% if rules.min_lease_months %}<span class="badge bg-secondary me-2 mb-2"><i class="fas fa-clock me-1"></i>最短租期{{ rules.min_lease_months }}個月</span>{% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="pricing-card card shadow-sm">
+                <div class="card-body">
+                    <div class="price-section text-center mb-3">
+                        <h2 class="price text-orange mb-0">NT$ {{ "{:,}".format(listing.price) }}</h2>
+                        <small class="text-muted">/ 月</small>
+                        {% if listing.deposit %}
+                        <p class="deposit-info mt-2 text-muted">
+                            <i class="fas fa-info-circle me-1"></i>{{ listing.deposit }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="contact-actions">
+                        <button class="btn btn-orange w-100 mb-2">
+                            <i class="fas fa-phone me-2"></i>聯絡房東
+                        </button>
+                        <button class="btn btn-outline-orange w-100 mb-2">
+                            <i class="far fa-heart me-2"></i>加入收藏
+                        </button>
+                        {% if listing.url %}
+                        <a href="{{ listing.url }}" class="btn btn-outline-secondary w-100" target="_blank">
+                            <i class="fas fa-external-link-alt me-2"></i>原始連結
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Info -->
+            <div class="location-card card shadow-sm mt-3">
+                <div class="card-body">
+                    <h6 class="card-title">位置資訊</h6>
+                    <p class="mb-1"><strong>縣市：</strong>{{ listing.city }}</p>
+                    <p class="mb-1"><strong>地區：</strong>{{ listing.district }}</p>
+                    {% if listing.address %}
+                    <p class="mb-0"><strong>地址：</strong>{{ listing.address }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Property Info -->
+            <div class="property-card card shadow-sm mt-3">
+                <div class="card-body">
+                    <h6 class="card-title">物件資訊</h6>
+                    <div class="property-stats">
+                        {% if listing.building_type %}
+                        <div class="stat-item d-flex justify-content-between">
+                            <span>類型：</span>
+                            <span>{{ listing.building_type }}</span>
+                        </div>
+                        {% endif %}
+                        {% if listing.layout %}
+                        <div class="stat-item d-flex justify-content-between">
+                            <span>格局：</span>
+                            <span>{{ listing.layout }}</span>
+                        </div>
+                        {% endif %}
+                        {% if listing.area %}
+                        <div class="stat-item d-flex justify-content-between">
+                            <span>坪數：</span>
+                            <span>{{ listing.area }}坪</span>
+                        </div>
+                        {% endif %}
+                        {% if listing.floor %}
+                        <div class="stat-item d-flex justify-content-between">
+                            <span>樓層：</span>
+                            <span>{{ listing.floor }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="container mt-4">
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">找不到物件</h4>
+        <p>抱歉，找不到您要查看的物件。</p>
+        <hr>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">返回首頁</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

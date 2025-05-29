@@ -1,70 +1,103 @@
-## 專案結構簡介
+# 🛠️ House Rental Search Platform
 
-```
-2025DBMS-main/
-├── backend/
-│   ├── .env.example              # 範例環境變數設定檔
-│   ├── requirements.txt          # Python 相依套件
-│   └── db/
-│       └── connection.py         # 資料庫連線設定
-```
+A modern, user-friendly house rental search platform inspired by 591, designed for efficient property discovery with natural query processing and hybrid search capabilities. Built with Flask and PostgreSQL, the platform features a responsive UI, vector-based similarity search, and app-level caching.
 
-## 使用資料庫
+## 🚀 Overview
 
-本專案使用 **PostgreSQL** 作為主要資料庫。
+This project provides a comprehensive frontend for house rental search, supporting both traditional and smart (NLP/image-based) search modes. Users can filter listings by `location`, `price`, `area`, `facilities`, and `rental rules`, or leverage natural language and image similarity for more intuitive discovery.
 
-### 步驟一：建立本地或連線遠端資料庫
+## 🏠 Features
 
-請確認本機或遠端 PostgreSQL 伺服器已安裝並啟動。
+- **Keyword SearchBox & Filtering SideBar**: Mathcing with listing title, then filter by city, district, price, area, facilities, and rental rules
+- **Smart Search Mode**: Use natural language as query and image-based search with hybrid similarity scoring
+- **Responsive Design**: Mobile-friendly interface using Bootstrap 5
+- **Image Galleries**: Multiple property images with carousel view
+- **Vector Search Ready**: Integration with pgvector for similarity search
+- **Pagination**: Efficient listing navigation
+- **Caching**: Redis/in-memory caching for improve filtering performance
 
-1. **若需在本地建立一個新資料庫（例如 `dbms2025`）**
+## 📦 Installation & Setup
 
+### Prerequisites
+- Python 3.8+
+- PostgreSQL 13+ with pgvector extension (backend handled separately)
+- Git
+
+### 1. Clone the Repository
 ```bash
-createdb dbms2025
+git clone <repository-url>
+cd 2025-DBMS
 ```
 
-建立資料庫後，請依序執行以下 SQL 檔案來初始化 schema 與預設資料，或使用任何 GUI 工具（如 pgAdmin）創建。
-
+### 2. Environment Setup
+Create a `.env` file in the root directory:
 ```bash
-psql -d dbms2025 -f backend/db/init.sql
-psql -d dbms2025 -f backend/db/insert_data.sql
+cp .env.example .env
 ```
+Edit `.env` and configure your environment variables as needed.
 
-請參考 `backend/.env.example` 複製為 `backend/.env`，並填入正確的連線資訊，範例格式如下。
-
-```
-DATABASE_URL=postgresql://postgres:your_password@localhost:5432/dbms2025
-```
-
-2. **直接連線遠端資料庫**
-
-本專案使用 Supabase（基於 PostgreSQL 的雲端平台）作為遠端資料庫。
-
-請參考 `backend/.env.example` 複製為 `backend/.env`，並填入正確的連線資訊。
-
-```
-DATABASE_URL=<supabase_connection_string>
-```
-
----
-
-### 步驟二：安裝相依套件
-
-請在 `backend` 資料夾內安裝所需 Python 套件：
-
+### 3. Install Dependencies
 ```bash
-cd backend
 pip install -r requirements.txt
 ```
 
+### 4. Run the Application
+```bash
+python main.py
+```
+The application will be available at `http://localhost:5000`
+
+## 🏗️ Project Structure
+
+- `main.py` — Application entry point
+- `app.py` — Flask app configuration and initialization
+- `cache.py` — Caching configuration (Redis/SimpleCache)
+- `models.py` — SQLAlchemy ORM models
+- `routes.py` — API and page routes (search, filtering, smart search)
+- `static/` — Static assets (CSS, JS)
+  - `css/style.css` — Custom styles
+  - `js/main.js` — Frontend logic (search, filters, API integration)
+- `templates/` — HTML templates
+  - `index.html` — Main search page
+  - `listing_detail.html` — Property detail page
+- `requirements.txt` — Python dependencies
+
+## ⚙️ Basic Functionalities & File Locations
+
+### Backend Logic
+- **Search & Filtering**: `routes.py` — Main listings endpoint with comprehensive filtering
+- **Smart Search (NLP/Image)**: `routes.py` — Endpoints for NLP query parsing and image embedding
+- **Database Models**: `models.py` — Property, facilities, rules, and image models
+- **Caching**: `cache.py` — Redis/SimpleCache setup and usage
+
+### Frontend Logic
+- **Search Interface**: `templates/index.html` — Search form, filters, smart search UI
+- **Listing Display**: `static/js/main.js` — Dynamic listing card generation
+- **Filter Management**: `static/js/main.js` — Filter application and clearing
+- **API Integration**: `static/js/main.js` — Dropdown population, search execution
+- **Image Gallery**: `templates/listing_detail.html` — Bootstrap carousel for property images
+
+### API Endpoints
+- `GET /` — Main search interface
+- `GET /listings` — Paginated listings with filters and smart search support
+- `GET /listing/<id>` — Detailed property view
+- `GET /api/cities` — Available cities for dropdown
+- `GET /api/districts/<city>` — Districts for selected city
+- `GET /api/building_types` — Available building types
+- `GET /api/layouts` — Available property layouts
+- `POST /api/parse_nlp_query` — NLP query parsing for smart search
+- `POST /api/upload_reference_image` — Reference image upload and embedding
+
+## 🧠 Smart Search Implementation Plan
+
+- **NLP Query Processing**: Extracts structured filters and generates text embeddings from user queries
+- **Image Processing**: Generates image embeddings for similarity search
+- **Hybrid Search**: Combines structured filters with aggregated similarity scores for most relevant results
+
+`final_score = α * text_score + (1 - α) * max(image_score)`  
+Where `α` can be tunable, and the displayed results are also cut by a tunable `threshold`.
+> We store `listing_embedding` and `image_embedding` as `VECTOR(512)` using pgvector.
+
 ---
 
-### 步驟三：確認可連線資料庫
-
-請執行以下指令，確認資料庫連線成功：
-
-```bash
-python backend/db/connection.py
-```
-
-如果顯示成功連線與目前timestamp，以及一筆 `listings` 資料表的資料，即表示資料庫連線成功。
+For backend/database setup, please refer to the backend's documentation. This readme focuses on the frontend and API integration for a seamless development.
