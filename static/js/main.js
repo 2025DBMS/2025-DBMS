@@ -201,9 +201,141 @@ async function performSmartSearch() {
     showLoading();
     
     try {
-        const formData = new FormData();
+        // Parse natural language query
+        let residualQuery = '';
+        let filterExists = false;
+        console.log('Performing smart search with text query:', smartQuery);
         if (smartQuery.trim()) {
-            formData.append('query_text', smartQuery);
+            try {
+                const res = await fetch('/api/llm/parse_nl', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query: smartQuery })
+                });
+
+
+                if (!res.ok) {
+                    throw new Error(`Failed to parse natural language: ${res.statusText}`);
+                }
+                const data = await res.json();
+                const parsed_filter = JSON.parse(data.output[0].content[0].text);
+                residualQuery = parsed_filter.other_requests || '';
+                console.log('Parsed filters:', parsed_filter);
+                console.log('Residual query:', residualQuery);
+
+                clearFilters(reload=false);
+                // Apply parsed filters
+
+                if (parsed_filter.city) {
+                    console.log('Setting city filter:', parsed_filter.city);
+                    const citySelect = document.getElementById('city-filter');
+                    const cityOption = Array.from(citySelect.options).find(option => option.value === parsed_filter.city);
+                    if (cityOption) {
+                        filterExists = true;
+                        citySelect.value = parsed_filter.city;
+                        await loadDistricts(parsed_filter.city);
+                        if (parsed_filter.district) {
+                            const districtSelect = document.getElementById('district-filter');
+                            const districtOption = Array.from(districtSelect.options).find(option => option.value === parsed_filter.district);
+                            if (districtOption) {
+                                filterExists = true;
+                                districtSelect.value = parsed_filter.district;
+                            }
+                        }
+                    }
+                }
+
+                if (parsed_filter.price_range) {
+                    if (parsed_filter.price_range.min) {
+                        document.getElementById('price-min').value = parsed_filter.price_range.min;
+                        filterExists = true;
+                    }
+                    if (parsed_filter.price_range.max) {
+                        document.getElementById('price-max').value = parsed_filter.price_range.max;
+                        filterExists = true;
+                    }
+                }
+
+                if (parsed_filter.price_range) {
+                    if (parsed_filter.price_range.min) {
+                        document.getElementById('price-min').value = parsed_filter.price_range.min;
+                        filterExists = true;
+                    }
+                    if (parsed_filter.price_range.max) {
+                        document.getElementById('price-max').value = parsed_filter.price_range.max;
+                        filterExists = true;
+                    }
+                }
+
+                if (parsed_filter.area_range) {
+                    const coef = parsed_filter.area_range.unit === 'm^2' ? 0.3025 : 1.0;
+                    const { min, max } = parsed_filter.area_range;
+                    if (max) {
+                        document.getElementById('area-max').value = max * coef;
+                        filterExists = true;
+                    }
+                    if (min) {
+                        document.getElementById('area-min').value = min * coef;
+                        filterExists = true;
+                    }
+                }
+
+                if (parsed_filter.property_type) {
+                    const buildingTypeSelect = document.getElementById('building-type-filter');
+                    const buildingTypeOption = Array.from(buildingTypeSelect.options).find(option => option.value === parsed_filter.property_type);
+                    if (buildingTypeOption) {
+                        filterExists = true;
+                        buildingTypeSelect.value = parsed_filter.property_type;
+                    }
+                }
+
+                if (parsed_filter.facilities.length > 0) {
+                    const facilityCheckboxes = document.querySelectorAll('.facility-filters input[type="checkbox"]');
+                    facilityCheckboxes.forEach(checkbox => {
+                        if (parsed_filter.facilities.includes(checkbox.id)) {
+                            checkbox.checked = true;
+                            filterExists = true;
+                        } else {
+                            checkbox.checked = false;
+                        }
+                    });
+                }
+
+                if (parsed_filter.rules.length > 0) {
+                    const ruleCheckboxes = document.querySelectorAll('.rule-filters input[type="checkbox"]');
+                    ruleCheckboxes.forEach(checkbox => {
+                        if (parsed_filter.rules.includes(checkbox.id)) {
+                            checkbox.checked = true;
+                            filterExists = true;
+                        } else {
+                            checkbox.checked = false;
+                        }
+                    });
+                }
+
+            } catch (err) {
+                residualQuery = smartQuery;
+                console.error('Failed to parse natural language:', err.message);
+            }
+        }
+
+        if (!residualQuery.trim() && !referenceImage) {
+            if (!filterExists) {
+                alert('請輸入描述文字或上傳參考圖片');
+                hideLoading();
+                return;
+            } else {
+                console.log('No residual query, applying filters');
+                applyFilters();
+                return;
+            }
+        }
+
+        const formData = new FormData();
+        if (residualQuery.trim()) {
+            formData.append('query_text', residualQuery);
         }
         if (referenceImage) {
             formData.append('query_image', referenceImage);
@@ -236,12 +368,15 @@ async function performSmartSearch() {
         console.error('Error:', error);
         showError('搜尋失敗，請稍後再試');
     } finally {
-        hideLoading();
+        if (!isLoading) {
+            hideLoading();
+        }
     }
 }
 
 // Apply filters
 function applyFilters() {
+    console.log(document.getElementById('city-filter').value);
     currentFilters = {
         keyword: document.getElementById('keyword-search').value,
         city: document.getElementById('city-filter').value,
@@ -264,11 +399,10 @@ function applyFilters() {
     });
     
     // Add rule filters
-    const ruleFilters = ['cooking_allowed', 'pet_allowed', 'short_term_allowed'];
-    ruleFilters.forEach(rule => {
-        const checkbox = document.getElementById(rule);
-        if (checkbox && checkbox.checked) {
-            currentFilters[rule] = 'true';
+    const ruleCheckboxes = document.querySelectorAll('.rule-filters input[type="checkbox"]');
+    ruleCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            currentFilters[checkbox.id] = 'true';
         }
     });
     
@@ -277,7 +411,7 @@ function applyFilters() {
 }
 
 // Clear all filters
-function clearFilters() {
+function clearFilters(reload = true) {
     // Clear form inputs
     document.getElementById('keyword-search').value = '';
     document.getElementById('city-filter').value = '';
@@ -299,12 +433,17 @@ function clearFilters() {
     // Reset filters and reload
     currentFilters = {};
     currentPage = 1;
-    loadListings();
+    if (reload) {
+        loadListings();
+    }
 }
 
 // Load listings with current filters
 async function loadListings() {
+    console.log(isLoading ? 'Already loading...' : 'Loading listings...');
     if (isLoading) return;
+
+    console.log('Loading listings');
     
     isLoading = true;
     showLoading();
