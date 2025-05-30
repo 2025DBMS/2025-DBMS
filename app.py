@@ -50,6 +50,9 @@ from routes import *
 from backend.routes import init_app as init_routes
 init_routes(app)
 
+from backend.routes.llm_api import llm_bp
+app.register_blueprint(llm_bp, url_prefix='/api/llm')
+
 if __name__ == "__main__":
     with app.app_context():
         # Import models to ensure tables are created

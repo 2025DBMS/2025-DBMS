@@ -87,11 +87,11 @@ body {
   margin-bottom: 0.75rem;
 }
 
-.facility-filters .form-check {
+.facility-filters .rule-filters .form-check  {
   margin-bottom: 0.5rem;
 }
 
-.facility-filters .form-check-label {
+.facility-filters .rule-filters .form-check-label {
   font-size: 0.9rem;
   color: hsl(var(--text-secondary));
 }
