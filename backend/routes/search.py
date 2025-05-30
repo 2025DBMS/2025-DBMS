@@ -3,13 +3,13 @@ from ..handlers.similarity import SimilarityHandler
 from ..services.embeddings import EmbeddingsService
 
 # Create blueprint
-search_bp = Blueprint('search', __name__)
+search_bp = Blueprint('smart-search', __name__)
 
 # Initialize services and handlers
 embeddings_service = EmbeddingsService()
 similarity_handler = SimilarityHandler(embeddings_service)
 
-@search_bp.route('/similar', methods=['POST'])
+@search_bp.route('/', methods=['POST'])
 def search_similar():
     """
     Search for similar listings based on image and/or text query
@@ -82,7 +82,6 @@ def search_similar():
             text_weight=text_weight,
             threshold=threshold
         )
-        print(f"similarity_results: {similarity_results}")
 
         # Clean up temporary file
         if query_image and os.path.exists(query_image):
@@ -94,7 +93,6 @@ def search_similar():
 
         # Get listing IDs from similarity results and ensure they are integers
         listing_ids = [int(result['id']) for result in similarity_results]
-        print(f"listing_ids: {listing_ids}")
 
         # Get full listing details
         from flask import current_app
