@@ -261,11 +261,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-// Initialize the search functionality when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    initializeFilters();
-    loadListings();
-});
-</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
