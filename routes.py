@@ -292,3 +292,69 @@ def upload_reference_image():
     except Exception as e:
         logging.error(f"Error uploading reference image: {str(e)}")
         return jsonify({'success': False, 'error': '圖片上傳失敗'}), 500
+
+@app.route('/api/listings/batch', methods=['POST'])
+def get_listings_by_ids():
+    """Get listings by their IDs"""
+    try:
+        listing_ids = request.json.get('ids', [])
+        print(f"listing_ids 2: {listing_ids}")
+        if not listing_ids:
+            return jsonify({
+                'listings': [],
+                'pagination': {
+                    'page': 1,
+                    'pages': 1,
+                    'per_page': len(listing_ids),
+                    'total': 0,
+                    'has_next': False,
+                    'has_prev': False
+                }
+            })
+
+        # Query listings with related data
+        listings = db.session.query(Listing).filter(
+            Listing.id.in_(listing_ids),
+            Listing.is_published == True
+        ).all()
+
+        # Format results
+        listings_data = []
+        for listing in listings:
+            listing_dict = listing.to_dict()
+
+            # Add facilities data
+            if listing.facilities:
+                listing_dict['facilities'] = listing.facilities.to_dict()
+            else:
+                listing_dict['facilities'] = {}
+
+            # Add rules data
+            if listing.rules:
+                listing_dict['rules'] = listing.rules.to_dict()
+            else:
+                listing_dict['rules'] = {}
+
+            # Add images data
+            listing_dict['images'] = [img.to_dict() for img in listing.images]
+
+            listings_data.append(listing_dict)
+
+        # Create pagination info
+        pagination = {
+            'page': 1,
+            'pages': 1,
+            'per_page': len(listing_ids),
+            'total': len(listings_data),
+            'has_next': False,
+            'has_prev': False
+        }
+
+        return jsonify({
+            'listings': listings_data,
+            'pagination': pagination
+        })
+
+    except Exception as e:
+        logging.error(f"Error in get_listings_by_ids: {str(e)}")
+        return jsonify({'error': 'Failed to fetch listings'}), 500

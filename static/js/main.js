@@ -186,7 +186,7 @@ function performSearch() {
 }
 
 // Perform smart search (NLP + Vector similarity)
-function performSmartSearch() {
+async function performSmartSearch() {
     const smartQuery = document.getElementById('smart-query').value;
     const referenceImage = document.getElementById('reference-image').files[0];
     const alpha = document.getElementById('alpha-slider').value / 100; // Convert to 0-1 range
@@ -197,49 +197,47 @@ function performSmartSearch() {
         return;
     }
     
-    // Store smart search parameters
-    currentFilters = {
-        search_mode: 'smart',
-        smart_query: smartQuery,
-        alpha_weight: alpha,
-        similarity_threshold: threshold
-    };
+    // Show loading spinner
+    showLoading();
     
-    // Handle image upload if present
-    if (referenceImage) {
-        uploadReferenceImage(referenceImage, () => {
-            currentPage = 1;
-            loadListings();
-        });
-    } else {
-        currentPage = 1;
-        loadListings();
-    }
-}
-
-// Upload reference image for smart search
-function uploadReferenceImage(file, callback) {
-    const formData = new FormData();
-    formData.append('image', file);
-    
-    // Note: This endpoint will be implemented by your team
-    fetch('/api/upload_reference_image', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            currentFilters.reference_image_id = data.image_id;
-            callback();
-        } else {
-            alert('圖片上傳失敗: ' + data.error);
+    try {
+        const formData = new FormData();
+        if (smartQuery.trim()) {
+            formData.append('query_text', smartQuery);
         }
-    })
-    .catch(error => {
-        console.error('Error uploading image:', error);
-        alert('圖片上傳失敗，請稍後再試');
-    });
+        if (referenceImage) {
+            formData.append('query_image', referenceImage);
+        }
+        
+        // Add weights and threshold
+        formData.append('text_weight', alpha);
+        formData.append('image_weight', 1 - alpha);
+        formData.append('threshold', threshold);
+        
+        const response = await fetch('/api/search/similar', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || '搜尋失敗');
+        }
+        
+        const data = await response.json();
+        
+        // Update results count
+        updateResultsInfo(data.pagination.total);
+        
+        // Display results
+        displayListings(data.listings);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showError('搜尋失敗，請稍後再試');
+    } finally {
+        hideLoading();
+    }
 }
 
 // Apply filters
@@ -631,8 +629,25 @@ function clearImagePreview() {
     fileInfo.textContent = '';
 }
 
+// Update slider values
+function updateSliderValues() {
+    const alphaSlider = document.getElementById('alpha-slider');
+    const alphaValue = document.getElementById('alpha-value');
+    const thresholdSlider = document.getElementById('threshold-slider');
+    const thresholdValue = document.getElementById('threshold-value');
+    
+    alphaSlider.addEventListener('input', function() {
+        alphaValue.textContent = `${this.value}% 文字`;
+    });
+    
+    thresholdSlider.addEventListener('input', function() {
+        thresholdValue.textContent = `${this.value}% 相似度`;
+    });
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     initializeFilters();
     loadListings();
+    updateSliderValues();
 });

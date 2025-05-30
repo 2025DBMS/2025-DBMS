@@ -9,3 +9,5 @@ python-dotenv
 flask
 flask_sqlalchemy
 flask_caching
+flask-cors
+numpy
