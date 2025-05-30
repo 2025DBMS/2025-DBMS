@@ -206,16 +206,63 @@ body {
   border-radius: 8px;
   padding: 1rem;
   background-color: hsl(var(--background-secondary));
+  height: 100%; /* Ensure it fills parent height */
+  display: flex;
+  flex-direction: column;
+  /* Added to align content inside preview vertically */
+  justify-content: center;
+  align-items: center;
 }
 
-#image-preview .btn-close {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.preview-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Ensure container takes full width */
+}
+
+.preview-image-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #preview-img {
-  border-radius: 4px;
   max-width: 100%;
-  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.preview-overlay {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.preview-image-wrapper:hover .preview-overlay {
+  opacity: 1;
+}
+
+.preview-info {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Ensure columns within the search row are equal height */
+.search-section > .row {
+    align-items: stretch;
+}
+
+.search-section > .row > .col-md-8,
+.search-section > .row > .col-md-4 {
+    display: flex;
+    flex-direction: column;
 }
 
 /* Detail page styles */
@@ -266,6 +313,15 @@ body {
   
   .listing-image {
     height: 250px;
+  }
+  
+  #image-preview {
+    margin-top: 1rem;
+    height: auto;
+  }
+  
+  .preview-image-wrapper {
+    min-height: 200px;
   }
 }
 
