@@ -46,9 +46,9 @@ init_cache(app)
 
 # Import routes after app creation to avoid circular imports
 from routes import *
-
-from backend.routes.search import search_bp
-app.register_blueprint(search_bp, url_prefix='/api/search')
+# Initialize routes
+from backend.routes import init_app as init_routes
+init_routes(app)
 
 from backend.routes.llm_api import llm_bp
 app.register_blueprint(llm_bp, url_prefix='/api/llm')

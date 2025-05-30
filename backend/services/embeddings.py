@@ -140,10 +140,10 @@ class EmbeddingsService:
             
             results = list(merged_results.values())
 
-        # Sort by combined score
-        results.sort(key=lambda x: x['combined_score'], reverse=True)
-        
-        # Filter results by threshold after combining scores
+        # Filter results by threshold first
         results = [r for r in results if r['combined_score'] > threshold]
         
-        return results 
+        # Then sort by combined score
+        results.sort(key=lambda x: x['combined_score'], reverse=True)
+        
+        return results

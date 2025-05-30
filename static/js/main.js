@@ -125,7 +125,7 @@ async function loadDistricts(city) {
 // Load building types
 async function loadBuildingTypes() {
     try {
-        const response = await fetch('/api/building_types');
+        const response = await fetch('/api/listings/building-types');
         const types = await response.json();
         
         const typeSelect = document.getElementById('building-type-filter');
@@ -346,7 +346,7 @@ async function performSmartSearch() {
         formData.append('image_weight', 1 - alpha);
         formData.append('threshold', threshold);
         
-        const response = await fetch('/api/search/similar', {
+        const response = await fetch('/api/smart-search', {
             method: 'POST',
             body: formData
         });
@@ -464,7 +464,7 @@ async function loadListings() {
             }
         }
         
-        const response = await fetch(`/listings?${params.toString()}`);
+        const response = await fetch(`/api/listings?${params.toString()}`);
         const data = await response.json();
         
         if (response.ok) {
@@ -526,7 +526,7 @@ function createListingCard(listing) {
     
     return `
         <div class="col-lg-4 col-md-6 col-sm-12">
-            <a href="/listing/${listing.id}" class="listing-card-link">
+            <a href="/listings/${listing.id}" class="listing-card-link">
                 <div class="card listing-card">
                     <div class="position-relative">
                         ${firstImage 
