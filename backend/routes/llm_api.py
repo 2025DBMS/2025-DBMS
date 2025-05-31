@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
-from ..utils.filter_schema import schema
+from ..utils.filter_schema import schema, prompt
 import os
 
 # Create blueprint
@@ -27,7 +27,7 @@ def parse_natural_language():
                 "content": [
                     {
                     "type": "input_text",
-                    "text": "你的輸入是一段針對房產資訊的查詢，請提取出輸入文字中符合欄位的資訊，並將所有不符合已知欄位的要求整理於「other_requests」。\n\n對於district的要求，請依照台灣真實存在的行政區，輸出包含「區、鄉、鎮、市」後綴的名稱，並在city欄輸出該district的上級行政區。\n對於價格的要求，如果只有提供一個數字，將其設為最高值。\n對於坪數的要求，如果只有提供一個數字，以其為中間值設定一個範圍。\n\n只輸出一個JSON物件。"
+                    "text": prompt
                     }
                 ]
                 },
