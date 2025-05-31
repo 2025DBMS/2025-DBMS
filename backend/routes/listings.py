@@ -12,103 +12,13 @@ listings_bp = Blueprint('listings', __name__)
 def listings():
     """Get listings with filtering and search"""
     try:
-        # Start with base query joining all related tables
         query = db.session.query(Listing).join(
             ListingFacility, Listing.id == ListingFacility.listing_id, isouter=True
         ).join(
             ListingRule, Listing.id == ListingRule.listing_id, isouter=True
         ).filter(Listing.is_published == True)
 
-        # Apply filters from query parameters
-        filters = []
-
-        # Location filters
-        city = request.args.get('city')
-        if city:
-            filters.append(Listing.city == city)
-
-        district = request.args.get('district')
-        if district:
-            filters.append(Listing.district == district)
-
-        # Price filters
-        price_min = request.args.get('price_min', type=int)
-        if price_min:
-            filters.append(Listing.price >= price_min)
-
-        price_max = request.args.get('price_max', type=int)
-        if price_max:
-            filters.append(Listing.price <= price_max)
-
-        # Area filters
-        area_min = request.args.get('area_min', type=int)
-        if area_min:
-            filters.append(Listing.area >= area_min)
-
-        area_max = request.args.get('area_max', type=int)
-        if area_max:
-            filters.append(Listing.area <= area_max)
-
-        # Building type filter
-        building_type = request.args.get('building_type')
-        if building_type:
-            filters.append(Listing.building_type == building_type)
-
-        # Layout filter
-        layout = request.args.get('layout')
-        if layout:
-            filters.append(Listing.layout == layout)
-
-        # Floor filter
-        floor = request.args.get('floor')
-        if floor:
-            filters.append(Listing.floor == floor)
-
-        # Facility filters
-        facility_filters = []
-        for facility in ['has_tv', 'has_aircon', 'has_fridge', 'has_washing', 'has_heater', 
-                        'has_bed', 'has_wardrobe', 'has_cable_tv', 'has_internet', 'has_gas',
-                        'has_sofa', 'has_table', 'has_balcony', 'has_elevator', 'has_parking']:
-            if request.args.get(facility) == 'true':
-                facility_filters.append(getattr(ListingFacility, facility) == True)
-
-        if facility_filters:
-            filters.extend(facility_filters)
-
-        # Rule filters
-        rule_filters = []
-        for rule in ['cooking_allowed', 'pet_allowed', 'smoking_allowed', 'short_term_allowed']:
-            if request.args.get(rule) == 'true':
-                rule_filters.append(getattr(ListingRule, rule) == True)
-
-        if rule_filters:
-            filters.extend(rule_filters)
-
-        # Gender restriction filter
-        gender_restricted = request.args.get('gender_restricted')
-        if gender_restricted:
-            filters.append(ListingRule.gender_restricted == gender_restricted)
-
-        # Minimum lease months filter
-        min_lease_months_min = request.args.get('min_lease_months_min', type=int)
-        if min_lease_months_min:
-            filters.append(ListingRule.min_lease_months >= min_lease_months_min)
-
-        min_lease_months_max = request.args.get('min_lease_months_max', type=int)
-        if min_lease_months_max:
-            filters.append(ListingRule.min_lease_months <= min_lease_months_max)
-
-        # Keyword search
-        keyword = request.args.get('keyword')
-        if keyword:
-            keyword_filter = or_(
-                Listing.title.ilike(f'%{keyword}%'),
-                Listing.city.ilike(f'%{keyword}%'),
-                Listing.district.ilike(f'%{keyword}%')
-            )
-            filters.append(keyword_filter)
-
-        # Apply all filters
+        filters = listing_filters(request.args)
         if filters:
             query = query.filter(and_(*filters))
 
@@ -174,6 +84,97 @@ def listings():
     except Exception as e:
         logging.error(f"Error in listings route: {str(e)}")
         return jsonify({'error': 'Failed to fetch listings'}), 500
+
+def listing_filters(args):
+    filters = []
+
+    # Location filters
+    city = args.get('city')
+    if city:
+        filters.append(Listing.city == city)
+
+    district = args.get('district')
+    if district:
+        filters.append(Listing.district == district)
+
+    # Price filters
+    price_min = args.get('price_min', type=int)
+    if price_min:
+        filters.append(Listing.price >= price_min)
+
+    price_max = args.get('price_max', type=int)
+    if price_max:
+        filters.append(Listing.price <= price_max)
+
+    # Area filters
+    area_min = args.get('area_min', type=int)
+    if area_min:
+        filters.append(Listing.area >= area_min)
+
+    area_max = args.get('area_max', type=int)
+    if area_max:
+        filters.append(Listing.area <= area_max)
+
+    # Building type filter
+    building_type = args.get('building_type')
+    if building_type:
+        filters.append(Listing.building_type == building_type)
+
+    # Layout filter
+    layout = args.get('layout')
+    if layout:
+        filters.append(Listing.layout == layout)
+
+    # Floor filter
+    floor = args.get('floor')
+    if floor:
+        filters.append(Listing.floor == floor)
+
+    # Facility filters
+    facility_filters = []
+    for facility in ['has_tv', 'has_aircon', 'has_fridge', 'has_washing', 'has_heater', 
+                    'has_bed', 'has_wardrobe', 'has_cable_tv', 'has_internet', 'has_gas',
+                    'has_sofa', 'has_table', 'has_balcony', 'has_elevator', 'has_parking']:
+        if args.get(facility) == 'true':
+            facility_filters.append(getattr(ListingFacility, facility) == True)
+
+    if facility_filters:
+        filters.extend(facility_filters)
+
+    # Rule filters
+    rule_filters = []
+    for rule in ['cooking_allowed', 'pet_allowed', 'smoking_allowed', 'short_term_allowed']:
+        if args.get(rule) == 'true':
+            rule_filters.append(getattr(ListingRule, rule) == True)
+
+    if rule_filters:
+        filters.extend(rule_filters)
+
+    # Gender restriction filter
+    gender_restricted = args.get('gender_restricted')
+    if gender_restricted:
+        filters.append(ListingRule.gender_restricted == gender_restricted)
+
+    # Minimum lease months filter
+    min_lease_months_min = args.get('min_lease_months_min', type=int)
+    if min_lease_months_min:
+        filters.append(ListingRule.min_lease_months >= min_lease_months_min)
+
+    min_lease_months_max = args.get('min_lease_months_max', type=int)
+    if min_lease_months_max:
+        filters.append(ListingRule.min_lease_months <= min_lease_months_max)
+
+    # Keyword search
+    keyword = args.get('keyword')
+    if keyword:
+        keyword_filter = or_(
+            Listing.title.ilike(f'%{keyword}%'),
+            Listing.city.ilike(f'%{keyword}%'),
+            Listing.district.ilike(f'%{keyword}%')
+        )
+        filters.append(keyword_filter)
+
+    return filters
 
 
 @listings_bp.route('/batch', methods=['POST'])
