@@ -1,0 +1,13 @@
+psycopg2-binary
+transformers
+torch
+pillow
+requests
+fastapi
+uvicorn
+python-dotenv
+flask
+flask_sqlalchemy
+flask_caching
+flask-cors
+numpy
