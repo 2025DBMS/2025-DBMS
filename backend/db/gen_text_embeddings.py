@@ -21,8 +21,8 @@ def fetch_text_descriptions(cur):
         WHERE listing_emb IS NULL
     """)
     rows = cur.fetchall()
-    listing_ids = [row[0] for row in rows]
-    descriptions = [row[1] for row in rows]
+    listing_ids = [row['listing_id'] for row in rows]
+    descriptions = [row['desc'] for row in rows]
     print(f"📝 Found {len(descriptions)} listings to embed.")
     return listing_ids, descriptions
 
