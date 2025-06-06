@@ -41,6 +41,7 @@ Edit `.env` and configure your environment variables as needed.
 pip install -r requirements.txt
 ```
 
+
 ### 4. Run the Application
 ```bash
 python main.py
