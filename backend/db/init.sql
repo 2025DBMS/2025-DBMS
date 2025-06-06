@@ -20,7 +20,7 @@ CREATE TABLE listings (
 );
 
 CREATE TABLE listing_facilities (
-  listing_id INTEGER NOT NULL REFERENCES listings(id),
+  listing_id INTEGER PRIMARY KEY REFERENCES listings(id),
   has_tv BOOLEAN NOT NULL DEFAULT FALSE,
   has_aircon BOOLEAN NOT NULL DEFAULT FALSE,
   has_fridge BOOLEAN NOT NULL DEFAULT FALSE,
@@ -39,7 +39,7 @@ CREATE TABLE listing_facilities (
 );
 
 CREATE TABLE listing_rules (
-  listing_id INTEGER NOT NULL REFERENCES listings(id),
+  listing_id INTEGER PRIMARY KEY REFERENCES listings(id),
   cooking_allowed BOOLEAN NOT NULL DEFAULT FALSE,
   pet_allowed BOOLEAN NOT NULL DEFAULT FALSE,
   smoking_allowed BOOLEAN NOT NULL DEFAULT FALSE,
