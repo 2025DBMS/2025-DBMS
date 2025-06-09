@@ -333,6 +333,9 @@ async function performSmartSearch() {
             }
         }
 
+        applyFilters(load = false);
+        const params = getParams();
+
         const formData = new FormData();
         if (residualQuery.trim()) {
             formData.append('query_text', residualQuery);
@@ -346,7 +349,7 @@ async function performSmartSearch() {
         formData.append('image_weight', 1 - alpha);
         formData.append('threshold', threshold);
         
-        const response = await fetch('/api/smart-search', {
+        const response = await fetch(`/api/smart-search?${params.toString()}`, {
             method: 'POST',
             body: formData
         });
@@ -375,7 +378,7 @@ async function performSmartSearch() {
 }
 
 // Apply filters
-function applyFilters() {
+function applyFilters(load = true) {
     console.log(document.getElementById('city-filter').value);
     currentFilters = {
         keyword: document.getElementById('keyword-search').value,
@@ -406,8 +409,10 @@ function applyFilters() {
         }
     });
     
-    currentPage = 1;
-    loadListings();
+    if (load) {
+        currentPage = 1;
+        loadListings();
+    }
 }
 
 // Clear all filters
@@ -450,20 +455,7 @@ async function loadListings() {
     
     try {
         // Build query parameters
-        const pageSize = document.getElementById('page-size').value || 10;
-        const params = new URLSearchParams({
-            page: currentPage,
-            limit: pageSize,
-            ...currentFilters
-        });
-        
-        // Remove empty parameters
-        for (let [key, value] of params.entries()) {
-            if (!value) {
-                params.delete(key);
-            }
-        }
-        
+        const params = getParams();
         const response = await fetch(`/api/listings?${params.toString()}`);
         const data = await response.json();
         
@@ -481,6 +473,24 @@ async function loadListings() {
         isLoading = false;
         hideLoading();
     }
+}
+
+function getParams() {
+    const pageSize = document.getElementById('page-size').value || 10;
+    const params = new URLSearchParams({
+        page: currentPage,
+        limit: pageSize,
+        ...currentFilters
+    });
+    
+    // Remove empty parameters
+    for (let [key, value] of params.entries()) {
+        if (!value) {
+            params.delete(key);
+        }
+    }
+    
+    return params;
 }
 
 // Display listings in grid

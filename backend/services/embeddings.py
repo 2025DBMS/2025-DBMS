@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from typing import List, Dict
+from typing import List, Dict, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from ..utils.similarity_search import SimilaritySearch
@@ -53,7 +53,9 @@ class EmbeddingsService:
                               query_text: str = None,
                               image_weight: float = 0.5,
                               text_weight: float = 0.5,
-                              threshold: float = 0.5) -> List[Dict]:
+                              threshold: float = 0.5,
+                              filter_sql: Optional[str] = "",
+                              filter_params: Optional[Dict] = {}) -> Dict:
         """Search for similar listings based on image and/or text query"""
         results = []
         
@@ -64,13 +66,20 @@ class EmbeddingsService:
 
                 # Search similar images
                 image_results = session.execute(
-                    text("""
+                    text(f"""
                         WITH ranked_images AS (
                             SELECT l.id,
-                                   1 - (li.image_embedding <=> CAST(:embedding AS vector)) as image_similarity,
-                                   ROW_NUMBER() OVER (PARTITION BY l.id ORDER BY 1 - (li.image_embedding <=> CAST(:embedding AS vector)) DESC) as rn
+                                1 - (li.image_embedding <=> CAST(:embedding AS vector)) as image_similarity,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY l.id
+                                    ORDER BY 1 - (li.image_embedding <=> CAST(:embedding AS vector)) DESC
+                                ) as rn
                             FROM listings l
+                            LEFT JOIN listing_facilities lf ON l.id = lf.listing_id
+                            LEFT JOIN listing_rules lr ON l.id = lr.listing_id
                             JOIN listing_images li ON l.id = li.listing_id
+                            {filter_sql}
+                            AND l.is_published = true
                         )
                         SELECT id, image_similarity
                         FROM ranked_images
@@ -78,10 +87,11 @@ class EmbeddingsService:
                         ORDER BY image_similarity DESC
                     """),
                     {
-                        "embedding": query_image_embedding.tolist()
+                        "embedding": query_image_embedding.tolist(),
+                        **filter_params
                     }
                 ).fetchall()
-                
+
                 for row in image_results:
                     results.append({
                         'id': row[0],
@@ -96,18 +106,23 @@ class EmbeddingsService:
 
                 # Search similar text
                 text_results = session.execute(
-                    text("""
+                    text(f"""
                         SELECT l.id,
-                               1 - (le.listing_emb <=> CAST(:embedding AS vector)) as text_similarity
+                            1 - (le.listing_emb <=> CAST(:embedding AS vector)) as text_similarity
                         FROM listings l
+                        LEFT JOIN listing_facilities lf ON l.id = lf.listing_id
+                        LEFT JOIN listing_rules lr ON l.id = lr.listing_id
                         JOIN listings_embeddings le ON l.id = le.listing_id
+                        {filter_sql}
+                        AND l.is_published = true
                         ORDER BY text_similarity DESC
                     """),
                     {
-                        "embedding": query_text_embedding.tolist()
+                        "embedding": query_text_embedding.tolist(),
+                        **filter_params
                     }
                 ).fetchall()
-                
+
                 for row in text_results:
                     results.append({
                         'id': row[0],

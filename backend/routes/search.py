@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from ..handlers.similarity import SimilarityHandler
 from ..services.embeddings import EmbeddingsService
+from .listings import listing_filters
+from sqlalchemy import and_
 
 # Create blueprint
 search_bp = Blueprint('smart-search', __name__)
@@ -74,13 +76,37 @@ def search_similar():
             return jsonify({
                 'error': '請提供文字描述或上傳圖片'
             }), 400
+        
+        # print("similarity search")
+        filters = listing_filters(request.args)
+        filter_sql = ""
+        filter_params = {}
+        
+        if filters:
+            compiled_filter = and_(*filters).compile(
+                compile_kwargs={"render_postcompile": True}
+            )
+            filter_sql_str = str(compiled_filter)
+            filter_sql_str = (
+                filter_sql_str
+                .replace("listings.", "l.")
+                .replace("listing_facilities.", "lf.")
+                .replace("listing_rules.", "lr.")
+            )
+            filter_sql = f"WHERE {filter_sql_str}"
+            filter_params = compiled_filter.params
+            # print(filter_sql)
+            # print(filter_params)
+        
 
         # Handle search request
         similarity_results = similarity_handler.handle_search_request(
             query_image=query_image,
             query_text=query_text,
             text_weight=text_weight,
-            threshold=threshold
+            threshold=threshold,
+            filter_sql=filter_sql,
+            filter_params=filter_params
         )
 
         # Clean up temporary file

@@ -9,7 +9,9 @@ class SimilarityHandler:
                             query_image: Optional[str] = None,
                             query_text: Optional[str] = None,
                             text_weight: Optional[float] = None,
-                            threshold: float = 0.5) -> Dict:
+                            threshold: float = 0.5,
+                            filter_sql: Optional[str] = "",
+                            filter_params: Optional[Dict] = {}) -> Dict:
         """
         Handle similarity search request
         
@@ -51,7 +53,9 @@ class SimilarityHandler:
                 query_text=query_text,
                 image_weight=image_weight,
                 text_weight=text_weight,
-                threshold=threshold
+                threshold=threshold,
+                filter_sql=filter_sql,
+                filter_params=filter_params
             )
 
             return results
