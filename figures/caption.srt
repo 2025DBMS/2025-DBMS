@@ -1,0 +1,94 @@
+1
+00:00:00,500 --> 00:00:02,000
+Next, we'll demonstrate
+the smart search mode in action.
+
+2
+00:00:02,500 --> 00:00:03,800
+This is the simple interface we've created.
+
+3
+00:00:04,000 --> 00:00:07,500
+Beyond standard keyword searches,
+users can switch to another tab
+for our 'Smart Search' feature.
+
+4
+00:00:08,000 --> 00:00:10,800
+Here, users can type their
+preferences in natural language.
+
+5
+00:00:11,000 --> 00:00:15,000
+For instance: "An apartment in Banqiao
+with AC and a washing machine,
+pet-friendly, around 20 pings."
+
+6
+00:00:15,500 --> 00:00:17,500
+After hitting search...
+
+7
+00:00:17,700 --> 00:00:22,500
+...the system quickly parses this input
+into database-supported filters
+like district (Banqiao), size,
+
+8
+00:00:22,700 --> 00:00:25,000
+and amenities,
+then returns matching results.
+
+9
+00:00:26,000 --> 00:00:28,500
+Another powerful feature is
+similarity search using images.
+
+10
+00:00:28,800 --> 00:00:31,000
+Let's demonstrate the image mode.
+
+11
+00:00:31,500 --> 00:00:34,500
+Users can upload a photo
+of a room they like...
+
+12
+00:00:34,700 --> 00:00:36,000
+...for example, this one.
+
+13
+00:00:37,500 --> 00:00:38,500
+After searching,
+
+14
+00:00:38,800 --> 00:00:43,000
+the results shown are visually
+similar to the uploaded reference image.
+
+15
+00:00:43,300 --> 00:00:48,000
+Notice they often feature similar elements
+like sofas, small tables,
+and comparable lighting styles.
+
+16
+00:00:48,500 --> 00:00:52,000
+This particular listing might not seem
+like a perfect match at first glance
+from its cover image.
+
+17
+00:00:52,300 --> 00:00:54,500
+However, listings often
+have multiple photos.
+
+18
+00:00:54,800 --> 00:00:56,500
+Clicking through, we can see
+this interior shot is much closer
+to our reference!
+
+19
+00:00:57,000 --> 00:00:58,500
+Thank you for watching our demo!
