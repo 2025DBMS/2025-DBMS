@@ -6,6 +6,12 @@ A modern, user-friendly house rental search platform inspired by 591, designed f
 
 This project provides a comprehensive frontend for house rental search, supporting both traditional and smart (NLP/image-based) search modes. Users can filter listings by `location`, `price`, `area`, `facilities`, and `rental rules`, or leverage natural language and image similarity for more intuitive discovery.
 
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=DRUsj76L9UId">
+    <img src="./figures/Cover.gif" alt="RentQuery Demo Video"/>
+  </a>
+</p>
+
 ## 🏠 Features
 
 - **Keyword SearchBox & Filtering SideBar**: Mathcing with listing title, then filter by city, district, price, area, facilities, and rental rules
